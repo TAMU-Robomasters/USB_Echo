@@ -23,7 +23,7 @@
 #include "usbd_cdc_if.h"
 
 /* USER CODE BEGIN INCLUDE */
-
+#include <string.h>
 /* USER CODE END INCLUDE */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -268,6 +268,11 @@ static int8_t CDC_Receive_FS(uint8_t* Buf, uint32_t *Len)
 	
 	uint8_t endLine0[] = "you typed q\r\n";
 	uint8_t endLine1[] = "you typed w\r\n";
+	uint8_t echo[] = " echo\r\n";
+	uint8_t retransmit[20];
+	memset(retransmit, 20, 0);
+	memcpy(retransmit, Buf, (int)*Len);
+	memcpy(retransmit + (int)*Len, echo, sizeof(echo));
 	
 	if (Buf[0] == 'q') {
 		CDC_Transmit_FS(endLine0, sizeof(endLine0));
@@ -276,11 +281,8 @@ static int8_t CDC_Receive_FS(uint8_t* Buf, uint32_t *Len)
 		CDC_Transmit_FS(endLine1, sizeof(endLine1));
 	}
 	else {
-		CDC_Transmit_FS(Buf, *Len);
+		CDC_Transmit_FS(Buf, *Len);		
 	}
-	
-	//CDC_Transmit_FS(Buf, *Len);
-	//CDC_Transmit_FS(endLine, sizeof(endLine));
 	
   return (USBD_OK);
   /* USER CODE END 6 */
